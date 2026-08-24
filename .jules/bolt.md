@@ -1,0 +1,3 @@
+## 2025-02-28 - Optimize getSlidePastCount with getSlides()
+**Learning:** Legacy Reveal.js v3.5.0 executes a nested loop running `querySelectorAll('section')` on every horizontal slide inside `getSlidePastCount()`. This creates an O(N) DOM querying bottleneck that runs on every slide change (when recalculating progress). `getSlides()` is already available and does a single optimized query `querySelectorAll(SLIDES_SELECTOR + ':not(.stack)')`.
+**Action:** Always check if a monolithic query function like `getSlides()` exists before writing DOM-querying loops over elements. Using pre-existing aggregated queries avoids N+1 query-like patterns on the frontend.
