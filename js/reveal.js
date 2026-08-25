@@ -231,6 +231,9 @@
 		// Client is a desktop Chrome, see #checkCapabilities()
 		isChrome,
 
+		// Cached method for matching a CSS selector, see #checkCapabilities()
+		matchesMethod,
+
 		// Throttles mouse wheel navigation
 		lastMouseWheelStep = 0,
 
@@ -344,6 +347,10 @@
 		isChrome = /chrome/i.test( UA ) && !/edge/i.test( UA );
 
 		var testElement = document.createElement( 'div' );
+
+		matchesMethod = 'matches' in testElement ? 'matches' :
+						'matchesSelector' in testElement ? 'matchesSelector' :
+						'msMatchesSelector' in testElement ? 'msMatchesSelector' : null;
 
 		features.transforms3d = 'WebkitPerspective' in testElement.style ||
 								'MozPerspective' in testElement.style ||
@@ -1360,13 +1367,8 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( matchesMethod && parent[matchesMethod] && parent[matchesMethod]( selector ) ) {
 				return parent;
 			}
 
