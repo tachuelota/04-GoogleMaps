@@ -1846,10 +1846,36 @@
 	function layoutSlideContents( width, height ) {
 
 		// Handle sizing of elements with the 'stretch' class
-		toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
+		var elements = toArray( dom.slides.querySelectorAll( 'section > .stretch' ) );
 
-			// Determine how much vertical space we can use
-			var remainingHeight = getRemainingHeight( element, height );
+		// Batch reads and writes to avoid layout thrashing
+		var state = elements.map( function( element ) {
+			var oldHeight = element.style.height;
+
+			// Change the .stretch element height to 0 in order find the height of all
+			// the other elements
+			element.style.height = '0px';
+
+			return {
+				element: element,
+				oldHeight: oldHeight
+			};
+		} );
+
+		// Now that all heights are zeroed, read the remaining height
+		state.forEach( function( item ) {
+			item.remainingHeight = ( height || 0 ) - item.element.parentNode.offsetHeight;
+		} );
+
+		// Restore the old height, just in case
+		state.forEach( function( item ) {
+			item.element.style.height = item.oldHeight;
+		} );
+
+		// Finally, apply the new heights
+		state.forEach( function( item ) {
+			var element = item.element;
+			var remainingHeight = item.remainingHeight;
 
 			// Consider the aspect ratio of media elements
 			if( /(img|video)/gi.test( element.nodeName ) ) {
@@ -1866,7 +1892,6 @@
 				element.style.width = width + 'px';
 				element.style.height = remainingHeight + 'px';
 			}
-
 		} );
 
 	}
