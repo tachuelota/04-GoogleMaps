@@ -1458,37 +1458,6 @@
 	}
 
 	/**
-	 * Returns the remaining height within the parent of the
-	 * target element.
-	 *
-	 * remaining height = [ configured parent height ] - [ current parent height ]
-	 *
-	 * @param {HTMLElement} element
-	 * @param {number} [height]
-	 */
-	function getRemainingHeight( element, height ) {
-
-		height = height || 0;
-
-		if( element ) {
-			var newHeight, oldHeight = element.style.height;
-
-			// Change the .stretch element height to 0 in order find the height of all
-			// the other elements
-			element.style.height = '0px';
-			newHeight = height - element.parentNode.offsetHeight;
-
-			// Restore the old height, just in case
-			element.style.height = oldHeight + 'px';
-
-			return newHeight;
-		}
-
-		return height;
-
-	}
-
-	/**
 	 * Checks if this instance is being used to print a PDF.
 	 */
 	function isPrintingPDF() {
@@ -1801,6 +1770,12 @@
 			// Select all slides, vertical and horizontal
 			var slides = toArray( dom.wrapper.querySelectorAll( SLIDES_SELECTOR ) );
 
+			// ⚡ Bolt: Batch DOM reads (slide.scrollHeight) to prevent layout thrashing
+			var slideHeights = slides.map( function( slide ) {
+				if( slide.style.display === 'none' ) return 0;
+				return slide.scrollHeight;
+			});
+
 			for( var i = 0, len = slides.length; i < len; i++ ) {
 				var slide = slides[ i ];
 
@@ -1816,7 +1791,7 @@
 						slide.style.top = 0;
 					}
 					else {
-						slide.style.top = Math.max( ( size.height - slide.scrollHeight ) / 2, 0 ) + 'px';
+						slide.style.top = Math.max( ( size.height - slideHeights[ i ] ) / 2, 0 ) + 'px';
 					}
 				}
 				else {
@@ -1846,10 +1821,22 @@
 	function layoutSlideContents( width, height ) {
 
 		// Handle sizing of elements with the 'stretch' class
-		toArray( dom.slides.querySelectorAll( 'section > .stretch' ) ).forEach( function( element ) {
+		var stretchElements = toArray( dom.slides.querySelectorAll( 'section > .stretch' ) );
 
-			// Determine how much vertical space we can use
-			var remainingHeight = getRemainingHeight( element, height );
+		// ⚡ Bolt: Batch DOM reads/writes to prevent layout thrashing
+		// 1. Reset heights
+		stretchElements.forEach( function( element ) {
+			element.style.height = '0px';
+		});
+
+		// 2. Read parent offset heights
+		var remainingHeights = stretchElements.map( function( element ) {
+			return height - element.parentNode.offsetHeight;
+		});
+
+		// 3. Set final calculated dimensions
+		stretchElements.forEach( function( element, i ) {
+			var remainingHeight = remainingHeights[ i ];
 
 			// Consider the aspect ratio of media elements
 			if( /(img|video)/gi.test( element.nodeName ) ) {
