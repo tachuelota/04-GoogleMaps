@@ -2666,9 +2666,9 @@
 	 */
 	function updateSlidesVisibility() {
 
-		// Select all slides and convert the NodeList result to
-		// an array
-		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
+		// ⚡ Bolt Optimization: Use NodeList directly instead of toArray()
+		// to avoid Array allocations and GC pauses on every slide change.
+		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
 			horizontalSlidesLength = horizontalSlides.length,
 			distanceX,
 			distanceY;
@@ -2692,7 +2692,8 @@
 			for( var x = 0; x < horizontalSlidesLength; x++ ) {
 				var horizontalSlide = horizontalSlides[x];
 
-				var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
+				// ⚡ Bolt Optimization: Use NodeList directly
+				var verticalSlides = horizontalSlide.querySelectorAll( 'section' ),
 					verticalSlidesLength = verticalSlides.length;
 
 				// Determine how far away this slide is from the present
