@@ -1245,7 +1245,13 @@
 	 */
 	function toArray( o ) {
 
-		return Array.prototype.slice.call( o );
+		// Bolt performance optimization: Using a manual array loop is significantly faster
+		// than Array.prototype.slice.call, which matters when converting NodeLists frequently.
+		var arr = new Array( o.length );
+		for( var i = 0; i < o.length; i++ ) {
+			arr[ i ] = o[ i ];
+		}
+		return arr;
 
 	}
 
