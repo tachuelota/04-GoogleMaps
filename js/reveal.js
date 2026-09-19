@@ -2560,9 +2560,8 @@
 	 */
 	function updateSlides( selector, index ) {
 
-		// Select all slides and convert the NodeList result to
-		// an array
-		var slides = toArray( dom.wrapper.querySelectorAll( selector ) ),
+		// Select all slides
+		var slides = dom.wrapper.querySelectorAll( selector ),
 			slidesLength = slides.length;
 
 		var printMode = isPrintingPDF();
@@ -2610,11 +2609,11 @@
 					element.classList.add( reverse ? 'future' : 'past' );
 
 					if( config.fragments ) {
-						var pastFragments = toArray( element.querySelectorAll( '.fragment' ) );
+						var pastFragments = element.querySelectorAll( '.fragment' );
 
 						// Show all fragments on prior slides
-						while( pastFragments.length ) {
-							var pastFragment = pastFragments.pop();
+						for( var j = 0; j < pastFragments.length; j++ ) {
+							var pastFragment = pastFragments[j];
 							pastFragment.classList.add( 'visible' );
 							pastFragment.classList.remove( 'current-fragment' );
 						}
@@ -2625,11 +2624,11 @@
 					element.classList.add( reverse ? 'past' : 'future' );
 
 					if( config.fragments ) {
-						var futureFragments = toArray( element.querySelectorAll( '.fragment.visible' ) );
+						var futureFragments = element.querySelectorAll( '.fragment.visible' );
 
 						// No fragments in future slides should be visible ahead of time
-						while( futureFragments.length ) {
-							var futureFragment = futureFragments.pop();
+						for( var k = 0; k < futureFragments.length; k++ ) {
+							var futureFragment = futureFragments[k];
 							futureFragment.classList.remove( 'visible' );
 							futureFragment.classList.remove( 'current-fragment' );
 						}
@@ -2666,9 +2665,8 @@
 	 */
 	function updateSlidesVisibility() {
 
-		// Select all slides and convert the NodeList result to
-		// an array
-		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ),
+		// Select all slides
+		var horizontalSlides = dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ),
 			horizontalSlidesLength = horizontalSlides.length,
 			distanceX,
 			distanceY;
@@ -2692,7 +2690,7 @@
 			for( var x = 0; x < horizontalSlidesLength; x++ ) {
 				var horizontalSlide = horizontalSlides[x];
 
-				var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) ),
+				var verticalSlides = horizontalSlide.querySelectorAll( 'section' ),
 					verticalSlidesLength = verticalSlides.length;
 
 				// Determine how far away this slide is from the present
