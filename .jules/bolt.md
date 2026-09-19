@@ -1,0 +1,3 @@
+## 2023-10-24 - NodeList Array Conversion in Hot Paths
+**Learning:** Legacy ES5 code frequently uses `Array.prototype.slice.call` (wrapped in a `toArray` helper) to convert NodeLists to arrays to enable array methods like `forEach` or `pop`. However, in hot paths like `updateSlides` and `updateSlidesVisibility` which run on every slide change or resize, this conversion is unnecessarily applied even when only using a simple `for` loop or accessing `.length`. This causes redundant memory allocations and garbage collection pressure.
+**Action:** Always verify if a NodeList conversion to an Array is actually required for the operations being performed. If a simple `for` loop is used, removing `toArray` eliminates array allocations completely.
