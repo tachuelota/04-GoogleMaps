@@ -1852,7 +1852,7 @@
 			var remainingHeight = getRemainingHeight( element, height );
 
 			// Consider the aspect ratio of media elements
-			if( /(img|video)/gi.test( element.nodeName ) ) {
+			if( element.nodeName === 'IMG' || element.nodeName === 'VIDEO' ) {
 				var nw = element.naturalWidth || element.videoWidth,
 					nh = element.naturalHeight || element.videoHeight;
 
@@ -2159,7 +2159,7 @@
 		// Prefer slide argument, otherwise use current slide
 		slide = slide ? slide : currentSlide;
 
-		return slide && slide.parentNode && !!slide.parentNode.nodeName.match( /section/i );
+		return slide && slide.parentNode && slide.parentNode.nodeName === 'SECTION';
 
 	}
 
@@ -4693,7 +4693,7 @@
 
 			var element = event.target;
 
-			while( element && !element.nodeName.match( /section/gi ) ) {
+			while( element && element.nodeName !== 'SECTION' ) {
 				element = element.parentNode;
 			}
 
@@ -4701,7 +4701,7 @@
 
 				deactivateOverview();
 
-				if( element.nodeName.match( /section/gi ) ) {
+				if( element.nodeName === 'SECTION' ) {
 					var h = parseInt( element.getAttribute( 'data-index-h' ), 10 ),
 						v = parseInt( element.getAttribute( 'data-index-v' ), 10 );
 
