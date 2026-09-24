@@ -3461,41 +3461,22 @@
 	 */
 	function getSlidePastCount() {
 
-		var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
+			// ⚡ Bolt Optimization:
+			// Calculate past count using existing indexh/indexv state variables
+			// rather than iterating through DOM and checking classes on every slide.
+			// This changes an O(N^2) DOM traversal into an O(N) simple loop.
+			var pastCount = indexv || 0;
 
-		// The number of past slides
-		var pastCount = 0;
+			var horizontalSlides = toArray( dom.wrapper.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) );
 
-		// Step through all slides and count the past ones
-		mainLoop: for( var i = 0; i < horizontalSlides.length; i++ ) {
+			for( var i = 0; i < indexh; i++ ) {
+				var horizontalSlide = horizontalSlides[i];
+				var verticalSlides = horizontalSlide.querySelectorAll( 'section' );
 
-			var horizontalSlide = horizontalSlides[i];
-			var verticalSlides = toArray( horizontalSlide.querySelectorAll( 'section' ) );
-
-			for( var j = 0; j < verticalSlides.length; j++ ) {
-
-				// Stop as soon as we arrive at the present
-				if( verticalSlides[j].classList.contains( 'present' ) ) {
-					break mainLoop;
-				}
-
-				pastCount++;
-
+				pastCount += ( verticalSlides.length || 1 );
 			}
 
-			// Stop as soon as we arrive at the present
-			if( horizontalSlide.classList.contains( 'present' ) ) {
-				break;
-			}
-
-			// Don't count the wrapping section for vertical slides
-			if( horizontalSlide.classList.contains( 'stack' ) === false ) {
-				pastCount++;
-			}
-
-		}
-
-		return pastCount;
+			return pastCount;
 
 	}
 
