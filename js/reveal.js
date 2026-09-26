@@ -1354,19 +1354,30 @@
 	 * @return {HTMLElement} The matched parent or null
 	 * if no matching parent was found
 	 */
+	var matchesMethod;
+
 	function closestParent( target, selector ) {
 
 		var parent = target.parentNode;
+
+		// ⚡ Bolt Optimization: Use native Element.prototype.closest when available for O(1) native DOM traversal
+		if( parent && typeof parent.closest === 'function' ) {
+			return parent.closest( selector );
+		}
 
 		while( parent ) {
 
 			// There's some overhead doing this each time, we don't
 			// want to rewrite the element prototype but should still
 			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// ⚡ Bolt Optimization: Cache the feature-detected matches method
+			if ( typeof matchesMethod === 'undefined' ) {
+				matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector || null;
+			}
 
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// Ensure we are operating on an element node before calling matches
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
