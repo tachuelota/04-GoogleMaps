@@ -231,6 +231,9 @@
 		// Client is a desktop Chrome, see #checkCapabilities()
 		isChrome,
 
+		// Cached property name for vendor-prefixed element matches method
+		matchesMethod,
+
 		// Throttles mouse wheel navigation
 		lastMouseWheelStep = 0,
 
@@ -1360,14 +1363,22 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// Only check Element nodes (nodeType === 1), as Document/DocumentFragment
+			// do not implement .matches and will throw errors.
+			if( parent.nodeType === 1 ) {
+				// Cache the matches method string on the first run to avoid overhead
+				// of checking multiple prefixes on every iteration.
+				if( matchesMethod === undefined ) {
+					if ( typeof parent.matches === 'function' ) matchesMethod = 'matches';
+					else if ( typeof parent.matchesSelector === 'function' ) matchesMethod = 'matchesSelector';
+					else if ( typeof parent.msMatchesSelector === 'function' ) matchesMethod = 'msMatchesSelector';
+					else matchesMethod = null;
+				}
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+				// If we find a match, we're all set
+				if( matchesMethod && parent[matchesMethod]( selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
