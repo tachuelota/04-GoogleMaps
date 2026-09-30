@@ -1,0 +1,3 @@
+## 2024-03-24 - Optimizing closestParent DOM traversal
+**Learning:** When optimizing DOM traversal in this codebase by caching the `matches` method reference, it is crucial to verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods like `.matches()`. Traversing up to `document` or `DocumentFragment` will throw a TypeError.
+**Action:** Always check `node.nodeType === 1` before calling DOM-specific methods during custom tree traversal loops.
