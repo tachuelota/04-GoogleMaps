@@ -1,0 +1,3 @@
+## 2024-05-18 - Optimize DOM Traversal in closestParent
+**Learning:** When navigating DOM structures manually in older frameworks, checking feature properties like `parent.matches` in loops evaluates properties dynamically on each iteration. Cache such properties locally per function call. Additionally, `DocumentFragment` and `document` lack matches-like properties and throw errors in some environments if invoked via prototype reflection—always verify `nodeType === 1`.
+**Action:** Cache feature-detection flags on the first successful check rather than evaluating them every loop, and ensure nodeType constraints before DOM manipulation or feature testing.

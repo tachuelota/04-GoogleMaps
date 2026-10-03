@@ -1358,16 +1358,24 @@
 
 		var parent = target.parentNode;
 
+		// Cache matches method to avoid feature detection on every iteration
+		var matchesMethod = null;
+
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// Ensure we are working with an Element node (nodeType === 1) before calling matches
+			if ( parent.nodeType === 1 ) {
+				if( !matchesMethod ) {
+					// There's some overhead doing this each time, we don't
+					// want to rewrite the element prototype but should still
+					// be enough to feature detect once at startup...
+					matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+				}
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+				// If we find a match, we're all set
+				if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
