@@ -1,0 +1,3 @@
+## 2024-05-14 - [Optimize DOM traversal matches]
+**Learning:** Traversing the DOM upwards past Element nodes (like reaching a Document or DocumentFragment) while using DOM-specific methods like `.matches()` or `.matchesSelector()` can throw TypeErrors because those nodes do not possess those methods. Caching feature-detected methods can save significant overhead in tight loops.
+**Action:** When writing or optimizing DOM traversal logic in this codebase, always ensure nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods, and cache the method reference if it relies on fallback detection.

@@ -1343,6 +1343,9 @@
 
 	}
 
+	// Cached method for matchesSelector
+	var matchesMethod;
+
 	/**
 	 * Find the closest parent that matches the given
 	 * selector.
@@ -1360,14 +1363,18 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// Catch cases where parent is not an Element (e.g. Document or DocumentFragment)
+			// nodeType === 1 corresponds to Node.ELEMENT_NODE
+			if( parent.nodeType === 1 ) {
+				// Cache the matches method name to avoid feature detecting each loop iteration
+				if( matchesMethod === undefined ) {
+					matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+				}
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+				// If we find a match, we're all set
+				if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
