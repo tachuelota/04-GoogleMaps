@@ -1,0 +1,3 @@
+## 2024-06-25 - Safe and Optimized DOM Traversal
+**Learning:** When traversing the DOM in `js/reveal.js` up to `document` or `DocumentFragment` instances, calling DOM-specific methods like `matches` throws TypeErrors because those instances lack these element-level methods. Feature detection within a `while` loop (like `closestParent`) also introduces unnecessary overhead.
+**Action:** Always verify `nodeType === 1` before invoking DOM methods on nodes that may not be `Element` instances, and cache feature-detected method names (e.g. on the function object) to avoid overhead inside tight loops.
