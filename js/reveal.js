@@ -1360,14 +1360,22 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// ⚡ Bolt: Check if node is an Element (nodeType === 1) before attempting to match.
+			// Traversing up to document or DocumentFragment can throw TypeErrors when invoking DOM-specific methods.
+			if ( parent.nodeType === 1 ) {
+				// ⚡ Bolt: Cache the matches method name on the function to avoid feature detecting every iteration.
+				if ( !closestParent.matchesMethodName ) {
+					closestParent.matchesMethodName = parent.matches ? 'matches' :
+						( parent.matchesSelector ? 'matchesSelector' :
+						( parent.msMatchesSelector ? 'msMatchesSelector' : null ) );
+				}
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+				var matchesMethodName = closestParent.matchesMethodName;
+
+				// If we find a match, we're all set
+				if ( matchesMethodName && parent[ matchesMethodName ]( selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
