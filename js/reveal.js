@@ -1363,11 +1363,17 @@
 			// There's some overhead doing this each time, we don't
 			// want to rewrite the element prototype but should still
 			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+			// Bolt: Optimization - Check for Element node (nodeType === 1) before invoking DOM-specific methods
+			// like `.matches()`, as traversing up to `document` or `DocumentFragment` will throw a TypeError.
+			// It also skips property lookups on non-element nodes avoiding unneeded processing.
+			if( parent.nodeType === 1 ) {
+				var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+
+				// If we find a match, we're all set
+				if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
