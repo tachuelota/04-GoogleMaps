@@ -1354,6 +1354,8 @@
 	 * @return {HTMLElement} The matched parent or null
 	 * if no matching parent was found
 	 */
+	var matchesMethod;
+
 	function closestParent( target, selector ) {
 
 		var parent = target.parentNode;
@@ -1363,11 +1365,16 @@
 			// There's some overhead doing this each time, we don't
 			// want to rewrite the element prototype but should still
 			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// Bolt Optimization: Verify parent is an Element (nodeType === 1) to avoid TypeError on document nodes
+			if ( parent.nodeType === 1 ) {
+				if ( matchesMethod === undefined ) {
+					matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+				}
 
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+				// If we find a match, we're all set
+				if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching

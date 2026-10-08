@@ -1,0 +1,3 @@
+## 2024-10-08 - Optimize DOM Traversal
+**Learning:** Caching native DOM methods like `Element.prototype.matches` and executing them via `.call()` improves traversal speed by eliminating redundant property lookups. However, applying these cached functions against a node that is not an Element (e.g., `document` or `documentFragment`) raises a `TypeError` due to illegal invocation, which didn't happen previously because the missing property safely evaluated to falsy.
+**Action:** When caching DOM methods for traversal, always verify `nodeType === 1` before invoking to preserve correctness during upwards traversal.
