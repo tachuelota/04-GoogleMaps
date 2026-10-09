@@ -1,0 +1,3 @@
+## 2024-10-09 - Optimize closestParent DOM Traversal
+**Learning:** Checking `matches`, `matchesSelector`, etc. dynamically on every `closestParent` traversal step has a small overhead. Caching the method on the parent object or using standard API with feature detection once is faster. The codebase specifies a memory: 'When optimizing DOM traversal in this codebase, always verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods like `.matches()`, as traversing up to `document` or `DocumentFragment` will throw a TypeError.'.
+**Action:** Optimize `closestParent` by ensuring `nodeType === 1` and potentially reusing a single standard matching capability.
