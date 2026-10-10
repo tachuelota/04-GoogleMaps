@@ -1343,6 +1343,10 @@
 
 	}
 
+	// Cached method for matching DOM elements against a CSS selector.
+	// Feature detected once at startup to improve performance.
+	var matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null;
+
 	/**
 	 * Find the closest parent that matches the given
 	 * selector.
@@ -1360,14 +1364,12 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
-				return parent;
+			// Only Element nodes have matches/matchesSelector
+			if( parent.nodeType === 1 ) {
+				// If we find a match, we're all set
+				if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+					return parent;
+				}
 			}
 
 			// Keep searching
