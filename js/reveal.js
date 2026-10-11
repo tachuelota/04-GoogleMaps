@@ -28,6 +28,8 @@
 	// The reveal.js version
 	var VERSION = '3.5.0';
 
+	var matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null;
+
 	var SLIDES_SELECTOR = '.slides section',
 		HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
 		VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
@@ -1360,13 +1362,12 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
+			// ⚡ Bolt: Cache DOM method lookup at module level to avoid feature detection overhead
+			// inside loops. Also ensure we only call matches on Element nodes (nodeType === 1)
+			// to avoid TypeError when reaching Document/DocumentFragment.
 
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( parent.nodeType === 1 && matchesMethod && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
