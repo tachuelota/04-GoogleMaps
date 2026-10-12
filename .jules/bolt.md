@@ -1,0 +1,3 @@
+## 2024-05-16 - DOM Traversal Optimization
+**Learning:** When repeatedly traversing the DOM upwards (like in `closestParent`), doing property lookups for `.matches` or `.matchesSelector` on every node is expensive. Additionally, traversing up to non-Element nodes (like `document` or `DocumentFragment`) without checking `nodeType === 1` can cause a `TypeError` when invoking element-specific methods.
+**Action:** Cache DOM methods (e.g., `Element.prototype.matches`) at the module level (with an existence check like `typeof Element !== 'undefined'`) and always verify `node.nodeType === 1` before calling them during traversal.
