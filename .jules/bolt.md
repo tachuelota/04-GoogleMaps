@@ -1,0 +1,3 @@
+## 2024-10-14 - DOM Method Caching
+**Learning:** In legacy environments requiring ES5 and manual DOM traversal, checking `.matches` on every parent node during deep traversal (like in `closestParent` loops) creates significant overhead. Caching the native DOM method at the module scope prevents repeated prototype lookups. However, cached DOM methods can throw TypeErrors if invoked on non-Element nodes (like DocumentFragment or the Document itself).
+**Action:** When caching DOM object prototypes like `Element.prototype.matches`, wrap in a `typeof Element !== 'undefined'` check to prevent ReferenceErrors in SSR. Then, verify that nodes are Element nodes (`nodeType === 1`) before calling the cached method.
