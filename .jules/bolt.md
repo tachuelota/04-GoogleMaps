@@ -1,0 +1,3 @@
+## 2024-06-25 - [DOM Traversal Optimization Edge Cases]
+**Learning:** When making DOM traversal optimizations (like caching matchesMethod) in legacy codebases, checking for `nodeType === 1` is critical to avoid TypeErrors when navigating up the DOM tree and hitting non-Element nodes (like Document or DocumentFragment) which don't support these methods. Furthermore, module-level caching of DOM objects/methods must be guarded by existence checks (e.g. `typeof Element !== 'undefined'`) to ensure SSR / non-browser compatibility.
+**Action:** Always verify node types during DOM traversal and guard module-level DOM caching in legacy repositories.
