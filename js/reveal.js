@@ -201,6 +201,9 @@
 		indexh,
 		indexv,
 
+		// Cached method for matching selectors to optimize closestParent
+		matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null,
+
 		// The previous and current slide HTML elements
 		previousSlide,
 		currentSlide,
@@ -1360,13 +1363,9 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// Verify nodeType === 1 to ensure it's an Element before invoking matchesMethod
+			if( parent.nodeType === 1 && matchesMethod && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
