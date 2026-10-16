@@ -272,7 +272,11 @@
 			'B  ,  .':				'Pause',
 			'F':					'Fullscreen',
 			'ESC, O':				'Slide overview'
-		};
+		},
+
+		// Cached method for element matches
+		// Optimization: Cache DOM matches method to avoid property lookup overhead in tight traversal loops
+		matchesMethod = typeof Element !== 'undefined' ? ( Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector ) : null;
 
 	/**
 	 * Starts up the presentation if the client is capable.
@@ -1360,13 +1364,9 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// Verify nodeType === 1 (Element) to prevent TypeError on document or DocumentFragment
+			if( parent.nodeType === 1 && matchesMethod && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
