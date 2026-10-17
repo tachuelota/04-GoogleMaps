@@ -1,0 +1,3 @@
+## 2026-10-17 - Optimize closestParent by caching matchesMethod
+**Learning:** Caching DOM methods like `Element.prototype.matches` for module-level usage improves performance when traversing up the DOM. Wrapping it in an existence check like `typeof Element !== 'undefined'` prevents ReferenceErrors in non-browser/SSR environments. Always verify nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods, as traversing up to `document` or `DocumentFragment` throws a TypeError.
+**Action:** When implementing DOM traversal optimizations, always verify node types and ensure non-browser compatibility by adding a `typeof` check around cached references.
