@@ -1,0 +1,4 @@
+## 2023-10-20 - Optimize DOM node traversing
+
+**Learning:** When using `element.matches()` during DOM traversal in this codebase, avoid looking up the property on every node iteration. Caching the `matches` method from the prototype (e.g. `Element.prototype.matches`) at the module level prevents property lookup overhead. Crucially, when traversing up the DOM to `document` or `DocumentFragment` elements, attempting to use the cached method causes a `TypeError` if they lack DOM Element methods.
+**Action:** When caching DOM element methods and traversing nodes, always ensure that the node is an Element node (`nodeType === 1`) before trying to invoke methods like `matches`. Use `typeof Element !== 'undefined'` to avoid ReferenceErrors during server-side rendering (SSR) context execution.
