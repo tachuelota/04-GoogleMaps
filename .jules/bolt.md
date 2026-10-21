@@ -1,0 +1,3 @@
+## 2024-06-19 - DOM Method Caching & Traversal Check
+**Learning:** Caching DOM methods like `Element.prototype.matches` requires a `typeof Element !== 'undefined'` check to prevent ReferenceErrors in SSR/non-browser contexts, and calling DOM methods during traversal requires verifying `nodeType === 1` first.
+**Action:** When caching DOM objects or methods at the module level, always wrap it in an existence check like `typeof Element !== 'undefined'`. When traversing DOM nodes, always verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods to prevent `TypeError` on `document` or `DocumentFragment` nodes.

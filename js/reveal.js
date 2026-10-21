@@ -272,7 +272,10 @@
 			'B  ,  .':				'Pause',
 			'F':					'Fullscreen',
 			'ESC, O':				'Slide overview'
-		};
+		},
+
+		// Cached match method for DOM traversal (performance optimization)
+		matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null;
 
 	/**
 	 * Starts up the presentation if the client is capable.
@@ -1360,13 +1363,9 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// Optimization: use cached matchesMethod and ensure it's an Element node
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
