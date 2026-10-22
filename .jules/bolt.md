@@ -1,0 +1,3 @@
+## 2024-10-22 - Optimizing DOM element matching
+**Learning:** When optimizing DOM traversal by caching `matchesMethod` at the module level (e.g. `Element.prototype.matches`), we must wrap it in a `typeof Element !== 'undefined'` check to prevent `ReferenceError` in non-browser/SSR environments. Also, when traversing up the DOM to `document` or `DocumentFragment`, calling DOM-specific methods like `.matches()` on them will throw a `TypeError`.
+**Action:** Always verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods, and always check for the existence of `Element` before caching its prototype methods at the module level.

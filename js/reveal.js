@@ -28,6 +28,12 @@
 	// The reveal.js version
 	var VERSION = '3.5.0';
 
+	// Cached method for checking if a DOM element matches a selector
+	var matchesMethod;
+	if( typeof Element !== 'undefined' ) {
+		matchesMethod = Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector;
+	}
+
 	var SLIDES_SELECTOR = '.slides section',
 		HORIZONTAL_SLIDES_SELECTOR = '.slides>section',
 		VERTICAL_SLIDES_SELECTOR = '.slides>section.present>section',
@@ -1360,13 +1366,8 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( parent.nodeType === 1 && matchesMethod && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
