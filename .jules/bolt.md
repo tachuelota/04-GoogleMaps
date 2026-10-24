@@ -1,0 +1,3 @@
+## 2024-03-24 - DOM Traversal Optimization
+**Learning:** In legacy applications requiring broad compatibility, feature detecting DOM methods (like `matches`) inside a traversal loop adds measurable overhead because the lookup crosses the prototype chain at each level.
+**Action:** When caching DOM methods at the module level (e.g. `matchesMethod`), wrap the caching in an existence check like `typeof Element !== 'undefined'` to avoid reference errors in non-browser/SSR environments. Also, when traversing to the document root, add a `nodeType === 1` check before calling DOM-specific methods to avoid TypeErrors when the loop hits nodes like `#document` or `DocumentFragment`.
