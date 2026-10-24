@@ -197,6 +197,9 @@
 		overviewSlideWidth = null,
 		overviewSlideHeight = null,
 
+		// Cached method for element matches selector
+		matchesMethod = typeof Element !== 'undefined' ? ( Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector ) : null,
+
 		// The horizontal and vertical index of the currently active slide
 		indexh,
 		indexv,
@@ -1360,13 +1363,8 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
