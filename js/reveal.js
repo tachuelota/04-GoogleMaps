@@ -222,6 +222,9 @@
 		// Cached references to DOM elements
 		dom = {},
 
+		// Cached DOM Element matches method
+		matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null,
+
 		// Features supported by the browser, see #checkCapabilities()
 		features = {},
 
@@ -1360,13 +1363,8 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
