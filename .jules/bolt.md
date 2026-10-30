@@ -1,0 +1,3 @@
+## 2024-10-30 - [DOM Traversal and Element.prototype.matches Caching]
+**Learning:** When optimizing DOM traversal in this codebase, always verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods like `.matches()`, as traversing up to `document` or `DocumentFragment` will throw a TypeError. When caching DOM objects or methods at the module level (e.g., `Element.prototype.matches`), always wrap it in an existence check like `typeof Element !== 'undefined'` to prevent ReferenceErrors in non-browser/SSR environments.
+**Action:** When updating traversal functions, I will ensure proper type-checking for nodes and environment checks for cached features to maintain compatibility and prevent errors.
