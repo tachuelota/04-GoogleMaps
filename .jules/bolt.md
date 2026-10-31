@@ -1,0 +1,3 @@
+## 2024-05-24 - [Cache DOM methods and verify nodeType]
+**Learning:** In legacy codebases using `Element.prototype.matches` (and its polyfills), the method should be cached at the module level rather than re-evaluated in tight loops (like `closestParent`), but must be wrapped in `typeof Element !== 'undefined'` for SSR compatibility. Additionally, DOM traversals checking for matches must ensure `nodeType === 1` before invoking Element-specific methods, otherwise traversing up to `document` or `DocumentFragment` will result in a TypeError.
+**Action:** When optimizing DOM traversal, cache the matches feature detection once at startup conditionally, and always verify nodes are Element nodes (`nodeType === 1`) before calling `.matches()`.

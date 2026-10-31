@@ -198,6 +198,9 @@
 		overviewSlideHeight = null,
 
 		// The horizontal and vertical index of the currently active slide
+		// Cached method for element.matches
+		matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null,
+
 		indexh,
 		indexv,
 
@@ -1360,13 +1363,9 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// ⚡ Bolt: Use module-level cached matchesMethod instead of checking prototype in loop
+			// ⚡ Bolt: Ensure nodeType === 1 before calling matchesMethod to prevent TypeError when reaching document
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
