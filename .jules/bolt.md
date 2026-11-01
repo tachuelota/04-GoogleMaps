@@ -1,0 +1,3 @@
+## 2024-11-01 - DOM Traversal Optimization
+**Learning:** When caching DOM methods like `Element.prototype.matches` at the module level, it's critical to check for `typeof Element !== 'undefined'` to avoid ReferenceErrors in SSR. Additionally, when using this cached method in traversal loops (e.g., climbing `parentNode`), nodes must be explicitly checked for `nodeType === 1` before invocation, as traversing up to `document` or `DocumentFragment` will result in a TypeError.
+**Action:** Always wrap module-level DOM method caches in existence checks and ensure nodes are `Element` nodes (`nodeType === 1`) before applying DOM-specific methods in traversal logic.
