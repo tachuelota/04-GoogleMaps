@@ -1,0 +1,4 @@
+
+## 2024-05-14 - Optimize matches() in closestParent DOM traversal
+**Learning:** Checking for `.matches` capabilities iteratively during deep DOM traversals introduces unnecessary property lookup overhead. Caching it globally improves traversal performance. However, because this codebase might be evaluated in non-browser (SSR) environments, accessing `Element.prototype` must be guarded with `typeof Element !== 'undefined'`. Furthermore, to prevent TypeErrors when calling `.matches()` on the `document` or `DocumentFragment` node, an explicit `nodeType === 1` check is required.
+**Action:** When caching DOM objects or methods at the module level, always wrap it in an existence check like `typeof Element !== 'undefined'`. When traversing up to the `document` level in this codebase, always verify that nodes are Element nodes (`nodeType === 1`) before invoking DOM-specific methods.
