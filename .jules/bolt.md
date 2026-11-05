@@ -1,0 +1,3 @@
+## 2024-11-05 - DOM Node Type Checks and Method Caching
+**Learning:** When traversing the DOM tree upward (e.g., in a loop checking parent nodes), traversing all the way to `document` or a `DocumentFragment` can cause TypeErrors if we blindly invoke Element-specific methods like `.matches()`, because these higher-level nodes are not Elements. Also, querying `parent.matches` on every iteration adds overhead.
+**Action:** When writing or optimizing DOM traversal loops, cache methods like `.matches()` at the module level (wrapped in a `typeof Element !== 'undefined'` check to prevent ReferenceErrors in non-browser environments). Inside the loop, always verify `nodeType === 1` before attempting to invoke DOM-specific methods on an element.
