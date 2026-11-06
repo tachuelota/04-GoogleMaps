@@ -1354,19 +1354,17 @@
 	 * @return {HTMLElement} The matched parent or null
 	 * if no matching parent was found
 	 */
+	// ⚡ Bolt: Cache DOM matches method once to avoid overhead during frequent traversals
+	var matchesMethod = typeof Element !== 'undefined' ? (Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector) : null;
+
 	function closestParent( target, selector ) {
 
 		var parent = target.parentNode;
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
-			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			// ⚡ Bolt: Only invoke matches on Element nodes to prevent TypeErrors on Document/DocumentFragment
+			if( matchesMethod && parent.nodeType === 1 && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
