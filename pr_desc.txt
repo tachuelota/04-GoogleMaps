@@ -1,0 +1,4 @@
+💡 What: Cached the DOM element `matches` method globally to avoid looking it up repeatedly in the `closestParent` function loop. Also verified the node is an element before invoking it to prevent exceptions.
+🎯 Why: `closestParent` is a DOM traversal utility that runs a loop up the node hierarchy. Fetching the method from prototypes on every iteration in every call has unnecessary overhead.
+📊 Impact: Reduces repetitive prototype chain lookups in DOM traversal, resulting in small but measurable efficiency gains when interacting with UI.
+🔬 Measurement: Run a CPU profile while doing heavy DOM operations or presentation navigation, the `closestParent` function will show slightly reduced self-time.

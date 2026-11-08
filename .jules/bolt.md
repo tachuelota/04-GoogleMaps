@@ -1,0 +1,3 @@
+## 2024-03-24 - DOM Traversal matches() method overhead
+**Learning:** Checking for the `matches` method (or prefixed versions like `matchesSelector`, `msMatchesSelector`) inside the loop of the `closestParent` function introduces unnecessary overhead since `Element.prototype.matches` is standard and doesn't change per element during a page session. It can be cached outside.
+**Action:** Always cache standard DOM methods like `Element.prototype.matches` outside loops or functions if they are supported across all elements. Make sure to check `typeof Element !== 'undefined'` as instructed in memory.
