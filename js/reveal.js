@@ -1222,6 +1222,12 @@
 
 	}
 
+	// Cached matches method for DOM elements
+	var matchesMethod;
+	if ( typeof Element !== 'undefined' ) {
+		matchesMethod = Element.prototype.matches || Element.prototype.matchesSelector || Element.prototype.msMatchesSelector;
+	}
+
 	/**
 	 * Extend object a with the properties of object b.
 	 * If there's a conflict, object b takes precedence.
@@ -1360,13 +1366,8 @@
 
 		while( parent ) {
 
-			// There's some overhead doing this each time, we don't
-			// want to rewrite the element prototype but should still
-			// be enough to feature detect once at startup...
-			var matchesMethod = parent.matches || parent.matchesSelector || parent.msMatchesSelector;
-
 			// If we find a match, we're all set
-			if( matchesMethod && matchesMethod.call( parent, selector ) ) {
+			if( parent.nodeType === 1 && matchesMethod && matchesMethod.call( parent, selector ) ) {
 				return parent;
 			}
 
